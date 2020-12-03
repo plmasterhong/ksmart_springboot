@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<!-- Begin header -->
+	<div id="header" th:fragment="headerFragment">
+		header.html<br>
+		상단메뉴 <br><br>
+		<a th:href="@{/addMember}" th:if="${session.SID == null || session.SLEVEL eq '1'}">01회원가입</a>
+		<a th:href="@{/memberList}" th:if="${session.SLEVEL eq '1'}">02회원전체검색</a>
+		<a th:href="@{/addGoods}" th:if="${session.SLEVEL eq '1' || session.SLEVEL eq '2'}">03상품등록</a>
+		<a href="/goodsList" th:if="${session.SLEVEL eq '1' || session.SLEVEL eq '2'}">04상품전체검색</a>
+		<a th:href="@{/sellerList}" th:if="${session.SLEVEL eq '1'}">05판매자별상품현황</a>
+		<a th:href="@{/login}" th:if="${session.SID == null}">06로그인</a>
+		<a th:href="@{/logout}" th:unless="${session.SID == null}">07로그아웃</a>
+		<br><br>
+		<div style="text-align: right;">		
+			<label th:unless="${session.SID == null}" th:text="${'id: ' + session.SID + ' ' + session.SNAME + '님이  로그인하셨습니다.'}"></label>
+		</div>
+				
+	</div>
+	<!-- end header -->
+</html>

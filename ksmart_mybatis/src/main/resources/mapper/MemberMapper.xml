@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ksmart37.ksmart_mybatis.mapper.MemberMapper">
+	<resultMap type="Member" id="resultMapMember">
+		<result column="m_id" 		property="memberId"/>
+		<result column="m_pw" 		property="memberPw"/>
+		<result column="m_level" 	property="memberLevel"/>
+		<result column="m_name" 	property="memberName"/>
+		<result column="m_email" 	property="memberEmail"/>
+		<result column="m_addr" 	property="memberAddr"/>
+		<result column="m_reg_date" property="memberRegDate"/>
+		<collection property="goodsList" javaType="java.util.ArrayList" ofType="Goods">
+			<id column="g_code" property="goodsCode"/>
+			<result column="g_seller_id" property="goodsSellerId"/>
+			<result column="g_name" property="goodsName"/>
+			<result column="g_price" property="goodsPrice"/>
+			<result column="g_reg_date" property="goodsRegDate"/>
+		</collection>
+	</resultMap>
+	<select id="getSellerList" resultMap="resultMapMember">
+		SELECT 
+			*
+		FROM 
+			tb_member AS m
+			INNER JOIN 
+			tb_goods AS g
+			ON 
+			m.m_id = g.g_seller_id;
+	</select>
+
+	<sql id="seletMemberColumn">
+		SELECT 
+			  m_id			
+			, m_pw			
+			, m_name		
+			, m_level		
+			, m_email		
+			, m_addr		
+			, m_reg_date
+	</sql>
+
+	<select id="getMemberList" resultMap="resultMapMember">
+		<include refid="seletMemberColumn" />	
+		FROM 
+			tb_member;
+	</select>
+	
+	<delete id="callProRemoveMemberById" parameterType="String" statementType="CALLABLE">
+		call pro_member_delete( #{memberId, mode=IN, jdbcType=VARCHAR, javaType=String}, 
+								#{memberLevel, mode=IN, jdbcType=VARCHAR, javaType=String});
+	</delete>
+	
+	<delete id="removeLoginById" parameterType="String">
+		DELETE
+		FROM
+			tb_login
+		WHERE
+			login_id = #{memberId};
+	</delete>
+
+	<delete id="removeOrderById" parameterType="String">
+		DELETE
+		FROM
+			tb_order
+		WHERE
+			o_id = #{memberId};
+	</delete>
+
+	<delete id="removeGoodsById" parameterType="String">
+		DELETE
+		FROM
+			tb_goods
+		WHERE
+			g_seller_id = #{memberId};
+	</delete>
+
+	<delete id="removeMemberById" parameterType="String">
+		DELETE
+		FROM
+			tb_member
+		WHERE
+			m_id = #{memberId};
+	</delete>
+	
+	<update id="modifyMember" parameterType="Member">
+		UPDATE tb_member
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="memberPw != null and memberPw neq ''.toString()">
+				m_pw	= #{memberPw},
+			</if>
+			<if test="memberName != null and memberName neq ''.toString()">
+				m_name	= #{memberName},
+			</if>
+			<if test="memberLevel != null and memberLevel neq ''.toString()">
+				m_level= #{memberLevel},
+			</if>
+			<if test="memberEmail != null and memberEmail neq ''.toString()">
+				m_email= #{memberEmail},
+			</if>
+			<if test="memberAddr != null and memberAddr neq ''.toString()">
+				m_addr	= #{memberAddr},
+			</if>
+		</trim>
+		WHERE
+			m_id = #{memberId}
+	</update>
+	
+	<select id="getMemberById" parameterType="String" resultMap="resultMapMember">
+		<include refid="seletMemberColumn" />	
+		FROM 
+			tb_member
+		WHERE
+			m_id = #{memberId};
+	</select>
+	
+	<insert id="addMember" parameterType="Member">
+		INSERT INTO tb_member
+		 (m_id, m_pw, m_name, m_level, m_email, m_addr, m_reg_date)
+		VALUES (
+		  #{memberId}
+		 ,#{memberPw}
+		 ,#{memberName}
+		 ,#{memberLevel}
+		 ,#{memberEmail}
+		 ,#{memberAddr}
+		 , NOW());
+	</insert>
+</mapper>

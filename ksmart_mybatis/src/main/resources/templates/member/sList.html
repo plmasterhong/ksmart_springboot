@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="@{layout/default}">
+
+<th:block layout:fragment="customTitle">
+	<title th:text="${title}"></title>
+</th:block>
+
+<th:block layout:fragment="customContent">
+	<table border="1">
+		<thead>
+			<tr>
+				<th>판매자 아이디</th>
+				<th>판매자 이름</th>
+				<th>상품 코드</th>
+				<th>상품 이름</th>
+				<th>상품 가격</th>
+				<th>수정</th>
+				<th>삭제</th>
+			</tr>
+		</thead>
+		<tbody>
+			<th:block th:if="${#lists.size(sellerList) > 0}" th:each="l : ${sellerList}">
+				<tr th:if="${#lists.size(l.goodsList) > 0}" th:each="gl : ${l.goodsList}">
+					<td th:text="${l.memberId}"></td>
+					<td th:text="${l.memberName}"></td>
+					<td th:text="${gl.goodsCode}"></td>
+					<td th:text="${gl.goodsName}"></td>
+					<td th:text="${#numbers.formatInteger(gl.goodsPrice,3,'COMMA')}" style="text-align: right;"></td>
+					<td>
+						<a  th:href="@{/sellerModifyGoods(goodsCode=${gl.goodsCode})}">수정</a>
+					</td>
+					<td>
+						<a th:href="@{/sellerRemoveGoods(goodsCode=${gl.goodsCode})}">삭제</a>
+					</td>
+				</tr>		
+			</th:block>
+		</tbody>
+	</table>
+</th:block>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="@{layout/default}">
+
+<th:block layout:fragment="customTitle">
+	<title th:text="${title}"></title>
+</th:block>
+
+<th:block layout:fragment="customContent">
+	<table border="1">
+		<thead>
+			<tr>
+				<th>상품 코드</th>
+				<th>상품 이름</th>
+				<th>상품 가격</th>
+				<th>판매자 아이디</th>
+				<th>판매자 이름</th>
+				<th>수정</th>
+				<th>삭제</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:if="${#lists.size(goodsList) > 0}" th:each="g : ${goodsList}">
+				<td th:text="${g.goodsCode}"></td>
+				<td th:text="${g.goodsName}"></td>
+				<td th:text="${#numbers.formatInteger(g.goodsPrice, 3, 'COMMA')}" style="text-align: right;"></td>
+				<td th:text="${g.goodsSellerId}"></td>
+				<td th:text="${g.member.memberName}"></td>
+				<td>
+					<a  th:href="@{/modifyGoods(goodsCode=${g.goodsCode})}">수정</a>
+				</td>
+				<td>
+					<a th:href="@{/removeGoods(goodsCode=${g.goodsCode})}">삭제</a>
+				</td>
+			</tr>		
+		</tbody>
+	</table>
+</th:block>
+</html>
