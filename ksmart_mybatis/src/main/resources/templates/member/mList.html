@@ -21,6 +21,16 @@
 
 
 <th:block layout:fragment="customContent">
+	<form action="/memberList" method="post">
+		<select name="sk">
+			<option value="아이디">아이디</option>
+			<option value="권한">권한</option>
+			<option value="이메일">이메일</option>
+		</select>
+		<input type="text" name="sv" placeholder="검색어를 입력해주세요"/>
+		<button type="submit">검색</button>
+	</form>
+	<br>
 	<table border="1">
 		<thead>
 			<tr>

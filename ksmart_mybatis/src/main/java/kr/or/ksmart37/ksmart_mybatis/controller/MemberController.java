@@ -1,11 +1,13 @@
 package kr.or.ksmart37.ksmart_mybatis.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,12 +33,71 @@ public class MemberController {
 	@Autowired
 	private GoodsService goodsService;
 	
+	
+	private static final Logger log = LoggerFactory.getLogger(MemberController.class);
+
+	@GetMapping("/logHistory")
+	public String logHistory(Model model
+							,@RequestParam(name = "currentPage", required = false, defaultValue = "1") int currentPage) {
+		
+		model.addAttribute("title", "로그인 이력");
+		
+		Map<String, Object> resultMap = memberService.getLoginHistory(currentPage);
+
+		model.addAttribute("loginHistory", resultMap.get("loginHistory"));
+		model.addAttribute("lastPage", resultMap.get("lastPage"));
+		model.addAttribute("currentPage", currentPage);
+		model.addAttribute("startPageNum", resultMap.get("startPageNum"));
+		model.addAttribute("endPageNum", resultMap.get("endPageNum"));
+		
+		//return "redirect:/";
+		return "login/logHistory";
+	}
+	
+	
+	
+	
 	@GetMapping("/logout")
 	public String logout(HttpSession session) {
 		
 		session.invalidate();
 		
 		return "redirect:/login";
+	}
+	
+	@PostMapping("/memberList")
+	public String memberList(@RequestParam(name = "sk", required = false) String searchKey
+							,@RequestParam(name = "sv", required = false) String searchValue
+							,Model model) {
+		log.info("화면에서 전달받은 파라미터 값 sk ::: {}", searchKey);
+		log.info("화면에서 전달받은 파라미터 값 sv ::: {}", searchValue);
+		
+		if(searchKey != null && "아이디".equals(searchKey)) {
+			searchKey = "m_id";
+		}else if(searchKey != null && "권한".equals(searchKey)) {
+			searchKey = "m_level";
+			
+			if(searchValue != null && "관리자".equals(searchValue)) {
+				searchValue = "1";
+			}else if(searchValue != null && "판매자".equals(searchValue)) {
+				searchValue = "2";				
+			}else if(searchValue != null && "구매자".equals(searchValue)) {
+				searchValue = "3";
+			}else {
+				searchValue = "";
+			}
+			
+		}else {
+			searchKey = "m_email";			
+		}
+		
+		log.info("searchKey 변환한 값 ::: {}", searchKey);
+		
+		model.addAttribute("title", "회원목록");
+		model.addAttribute("memberList", memberService.getSearchMemberList(searchKey, searchValue));
+		
+		//return "redirect:/";
+		return "member/mList";
 	}
 	
 	@PostMapping("/login")
@@ -111,9 +172,11 @@ public class MemberController {
 	
 	@PostConstruct
 	public void initialize() {
-		System.out.println("======================================");
-		System.out.println("MemberController 객체 생성");
-		System.out.println("======================================");
+		/*
+		 * System.out.println("======================================");
+		 * System.out.println("MemberController 객체 생성");
+		 * System.out.println("======================================");
+		 */
 	}
 	
 	@GetMapping("/sellerList")

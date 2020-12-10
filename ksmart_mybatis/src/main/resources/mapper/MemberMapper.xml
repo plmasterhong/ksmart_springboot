@@ -19,6 +19,25 @@
 			<result column="g_reg_date" property="goodsRegDate"/>
 		</collection>
 	</resultMap>
+	
+	<select id="getLoginHistoryCount" resultType="int">
+		SELECT
+			count(*)
+		FROM
+			tb_login;
+	</select>
+	
+	<select id="getLoginHistory" parameterType="int" resultType="map">
+		SELECT
+			 l.login_num 	AS loginNum
+			,l.login_id		AS loginId
+			,l.login_date 	AS loginDate
+			,l.logout_date  AS logoutDate
+		FROM
+			tb_login AS l
+		LIMIT #{startRow}, #{rowPerPage};
+	</select>
+	
 	<select id="getSellerList" resultMap="resultMapMember">
 		SELECT 
 			*
@@ -40,6 +59,16 @@
 			, m_addr		
 			, m_reg_date
 	</sql>
+
+	<select id="getSearchMemberList" parameterType="String" resultMap="resultMapMember">
+		<include refid="seletMemberColumn" />	
+		FROM 
+			tb_member
+		WHERE
+			<if test="searchKey != null and searchKey neq ''.toString()">
+				${searchKey} LIKE CONCAT('%', #{searchValue} , '%');
+			</if>
+	</select>
 
 	<select id="getMemberList" resultMap="resultMapMember">
 		<include refid="seletMemberColumn" />	

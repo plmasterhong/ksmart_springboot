@@ -1,6 +1,8 @@
 package kr.or.ksmart37.ksmart_mybatis.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,59 @@ public class MemberService {
 	// DI
 	@Autowired 
 	private MemberMapper memberMapper;
+	
+	public Map<String, Object> getLoginHistory(int currentPage){
+		int startRow = 0;
+		int rowPerPage = 5;
+		int startPageNum = 1;
+		int endPageNum = 10;
+				
+		//last 페이지 구하기
+		double count = memberMapper.getLoginHistoryCount();
+		int lastPage = (int) Math.ceil(count/rowPerPage);
+		
+		//페이지 알고리즘
+		startRow = (currentPage - 1) * rowPerPage;
+		
+		List<Map<String, Object>> loginHistory = memberMapper.getLoginHistory(startRow, rowPerPage);
+		
+		if(currentPage > 6) {
+			startPageNum = currentPage - 5;
+			endPageNum  = currentPage + 4;
+			
+			if(endPageNum >= lastPage) {
+				startPageNum = (lastPage - 9);
+				endPageNum = lastPage;
+			}
+		}
+		
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap.put("lastPage", lastPage);
+		resultMap.put("loginHistory", loginHistory);
+		resultMap.put("startPageNum", startPageNum);
+		resultMap.put("endPageNum", endPageNum);
+		
+		return resultMap;
+	}
+	
+	public List<Member> getSearchMemberList(String searchKey, String searchValue){
+		List<Member> memberList = memberMapper.getSearchMemberList(searchKey, searchValue);
+		
+		int listSize = memberList.size();
+		for(int i=0; i<listSize; i++) {
+			if("1".equals(memberList.get(i).getMemberLevel())) {
+				memberList.get(i).setMemberLevel("관리자");
+			}else if("2".equals(memberList.get(i).getMemberLevel())) {
+				memberList.get(i).setMemberLevel("판매자");
+			}else if("3".equals(memberList.get(i).getMemberLevel())) {
+				memberList.get(i).setMemberLevel("구매자");				
+			}else {
+				memberList.get(i).setMemberLevel("일반회원");
+			}
+		}
+		
+		return memberList;
+	}
 	
 	public List<Member> getSellerList(){
 		List<Member> sellerList = memberMapper.getSellerList();

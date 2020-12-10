@@ -11,6 +11,7 @@
 		<a th:href="@{/sellerList}" th:if="${session.SLEVEL eq '1'}">05판매자별상품현황</a>
 		<a th:href="@{/login}" th:if="${session.SID == null}">06로그인</a>
 		<a th:href="@{/logout}" th:unless="${session.SID == null}">07로그아웃</a>
+		<a th:href="@{/logHistory}" th:unless="${session.SID == null}">08로그인 history</a>
 		<br><br>
 		<div style="text-align: right;">		
 			<label th:unless="${session.SID == null}" th:text="${'id: ' + session.SID + ' ' + session.SNAME + '님이  로그인하셨습니다.'}"></label>

@@ -11,7 +11,14 @@ public class Member{
 	private String memberAddr;
 	private String memberRegDate;
 	private List<Goods>	goodsList;
+	private List<Member> parameterList;
 	
+	public List<Member> getParameterList() {
+		return parameterList;
+	}
+	public void setParameterList(List<Member> parameterList) {
+		this.parameterList = parameterList;
+	}
 	public String getMemberId() {
 		return memberId;
 	}
@@ -79,6 +86,8 @@ public class Member{
 		builder.append(memberRegDate);
 		builder.append(", goodsList=");
 		builder.append(goodsList);
+		builder.append(", parameterList=");
+		builder.append(parameterList);
 		builder.append("]");
 		return builder.toString();
 	}

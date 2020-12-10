@@ -9,5 +9,12 @@
 
 <th:block layout:fragment="customContent">
 	<H1>HELLO SPRING BOOT1</H1>
+	<form action="/listTest1" method="post">
+		<input type="text" name="parameterList[0].memberId"/>
+		<input type="text" name="parameterList[1].memberId"/>
+		<input type="text" name="parameterList[2].memberId"/>
+		<input type="text" name="parameterList[3].memberId"/>
+		<button type="submit">입력</button>
+	</form>
 </th:block>
 </html>
